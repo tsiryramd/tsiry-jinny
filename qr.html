@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur QR — Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Jost', sans-serif;
+    background: #FDFCF8;
+    color: #1A1612;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 480px; width: 100%;
+    text-align: center;
+  }
+  .label {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #9B7B2A;
+    margin-bottom: 32px;
+    display: block;
+  }
+  h1 {
+    font-family: 'Jost', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 8px;
+  }
+  p.sub {
+    font-size: 13px; font-weight: 300; color: #8A7A6A;
+    margin-bottom: 32px; line-height: 1.6;
+  }
+  input {
+    width: 100%;
+    border: 1px solid rgba(201,168,76,0.4);
+    background: white;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px; font-weight: 300;
+    padding: 14px 18px;
+    outline: none;
+    color: #1A1612;
+    margin-bottom: 12px;
+    transition: border-color 0.3s;
+  }
+  input:focus { border-color: #C9A84C; }
+  button {
+    width: 100%;
+    background: #1A1612;
+    color: #F0E4C2;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px; font-weight: 300;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    padding: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-bottom: 36px;
+  }
+  button:hover { background: #C9A84C; color: #1A1612; }
+  #qr-wrap {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  #qr-wrap.show { display: flex; }
+  #qr-box {
+    padding: 24px;
+    border: 1px solid rgba(201,168,76,0.3);
+    background: white;
+    display: inline-block;
+  }
+  #qr-box canvas, #qr-box img { display: block; }
+  .dl-btn {
+    background: transparent !important;
+    border: 1px solid #C9A84C !important;
+    color: #9B7B2A !important;
+    padding: 12px 32px !important;
+    width: auto !important;
+  }
+  .dl-btn:hover { background: #C9A84C !important; color: white !important; }
+  .divider {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+    margin: 0 auto 24px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <span class="label">Outil utilitaire</span>
+  <h1>Générateur de QR Code</h1>
+  <p class="sub">Entrez l'URL finale de votre invitation pour générer le QR code à inclure dans votre message.</p>
+  <div class="divider"></div>
+  <input type="url" id="url-input" placeholder="https://votre-lien-invitation.vercel.app" />
+  <button onclick="generate()">Générer le QR Code</button>
+  <div id="qr-wrap">
+    <div id="qr-box"></div>
+    <button class="dl-btn" onclick="download()">Télécharger le QR Code</button>
+  </div>
+</div>
+
+<script>
+function generate() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) return;
+  const box = document.getElementById('qr-box');
+  box.innerHTML = '';
+  new QRCode(box, {
+    text: url,
+    width: 220, height: 220,
+    colorDark: '#1A1612',
+    colorLight: '#FDFCF8',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  document.getElementById('qr-wrap').classList.add('show');
+}
+
+function download() {
+  const canvas = document.querySelector('#qr-box canvas');
+  if (!canvas) return;
+  const link = document.createElement('a');
+  link.download = 'qr-invitation-tsiry-jinny.png';
+  link.href = canvas.toDataURL();
+  link.click();
+}
+</script>
+</body>
+</html>
