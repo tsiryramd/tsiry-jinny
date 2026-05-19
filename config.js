@@ -37,13 +37,13 @@ const WEDDING_CONFIG = {
   // --- CÉRÉMONIE ---
   ceremony: {
     date:       "Samedi 22 Août 2026",
-    church:     "FJKM Androndra Fahasoavana",
+    church:     "FJKM Arivonimamo",
     churchTime: "11h00",
   },
 
   // --- RÉCEPTION ---
   reception: {
-    venue:     "Nom de l'espace de réception", // ← à remplir
+    venue:     "Mon Refuge Arivonimamo", // ← à remplir
     time:      "13h30",                         // ← à remplir
   },
 
@@ -54,6 +54,6 @@ const WEDDING_CONFIG = {
   forbiddenColors: "Fluo",
 
   // --- CONTACTS RSVP (optionnel, laisser vide si non souhaité) ---
-  rsvpContact: "",  // ex: "+261 34 00 000 00" ou "nom@email.com"
+  rsvpContact: "+261 38 82 678 11",  // ex: "+261 34 00 000 00" ou "nom@email.com"
 
 };
