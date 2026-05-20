@@ -37,13 +37,13 @@ const WEDDING_CONFIG = {
   // --- CÉRÉMONIE ---
   ceremony: {
     date:       "Samedi 22 Août 2026",
-    church:     "FJKM Arivonimamo",
+    church:     "FJKM Androndra Fahasoavana",
     churchTime: "11h00",
   },
 
   // --- RÉCEPTION ---
   reception: {
-    venue:     "Mon Refuge Arivonimamo", // ← à remplir
+    venue:     "Anthirium Espace", // ← à remplir
     time:      "13h30",                         // ← à remplir
   },
 
