@@ -655,12 +655,25 @@
   function updateLightbox(idx){
     idx = Math.max(0, Math.min(galleryImagesArr.length-1, idx));
     lbCurrent = idx;
-    const lb = document.getElementById('lightbox');
     const lbImg = document.getElementById('lightbox-img');
     const lbCounter = document.getElementById('lightbox-counter');
     const lbPrev = document.getElementById('lightbox-prev');
     const lbNext = document.getElementById('lightbox-next');
-    lbImg.src = galleryImagesArr[idx];
+
+    // Forcer le chargement si l'image n'a pas encore été lazy-loadée
+    const thumbImg = document.querySelectorAll('.gallery-item img')[idx];
+    if(thumbImg){
+      const realSrc = thumbImg.dataset.src || thumbImg.src;
+      if(thumbImg.dataset.src){
+        // Déclencher le chargement dans la vignette aussi
+        thumbImg.src = realSrc;
+        thumbImg.removeAttribute('data-src');
+      }
+      lbImg.src = realSrc;
+    } else {
+      lbImg.src = galleryImagesArr[idx];
+    }
+
     lbCounter.textContent = (idx+1) + ' / ' + galleryImagesArr.length;
     if(lbPrev) lbPrev.disabled = idx === 0;
     if(lbNext) lbNext.disabled = idx === galleryImagesArr.length - 1;
