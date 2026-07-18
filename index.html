@@ -100,17 +100,14 @@
 
   /* FAMILY */
   .family-role { font-size:9px; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold-deep); margin-bottom:6px; opacity:0.8; }
-  .family-grid { display:grid; grid-template-rows:auto auto auto; grid-template-columns:1fr 1px 1fr; gap:0 32px; text-align:left; margin:24px 0; align-items:start; }
-  .family-divider { grid-column:2; grid-row:1/4; background:linear-gradient(180deg,transparent,var(--gold),transparent); opacity:0.4; }
+  .family-layout { display:flex; gap:0; text-align:left; margin:24px 0; align-items:stretch; }
+  .family-col { flex:1; padding:8px 0; overflow:hidden; }
+  .family-col-right { padding-left:24px; }
+  .family-sep-v { width:1px; flex-shrink:0; background:linear-gradient(180deg,transparent,var(--gold),transparent); opacity:0.4; }
   @media (max-width:540px) {
-    .family-grid { grid-template-columns:1fr; grid-template-rows:auto; gap:0; }
-    .family-divider { display:none; }
-    .family-col-left-1  { grid-column:1; grid-row:1; }
-    .family-col-right-1 { grid-column:1; grid-row:2; border-top:1px solid var(--border); margin-top:12px; padding-top:12px; }
-    .family-col-sep-l   { display:none; }
-    .family-col-sep-r   { grid-column:1; grid-row:3; }
-    .family-col-left-3  { grid-column:1; grid-row:4; }
-    .family-col-right-3 { grid-column:1; grid-row:5; border-top:1px solid var(--border); margin-top:12px; padding-top:12px; }
+    .family-layout { flex-direction:column; }
+    .family-sep-v { display:none; }
+    .family-col-right { padding-left:0; border-top:1px solid var(--border); margin-top:14px; padding-top:8px; }
   }
 
   /* EVENT */
@@ -350,14 +347,30 @@
     // 2 — FAMILLES
     `<div class="slide-inner">
       <div class="card">
-        <div class="family-grid">
-          <div class="fade-child family-col-left-1" style="padding:8px 0;grid-column:1;grid-row:1;"><div class="family-role">Côté marié</div><p class="family-text">${C.families.left.parents}</p></div>
-          <div class="family-divider"></div>
-          <div class="fade-child family-col-right-1" style="padding:8px 0;grid-column:3;grid-row:1;"><div class="family-role">Côté mariée</div><p class="family-text">${C.families.right.parents}</p></div>
-          <div class="fade-child family-col-sep-l" style="grid-column:1;grid-row:2;">${orn()}</div>
-          <div class="family-col-sep-r" style="grid-column:3;grid-row:2;">${orn()}</div>
-          <div class="fade-child family-col-left-3" style="grid-column:1;grid-row:3;padding:0 0 8px;"><p class="family-text" style="font-style:italic">${C.families.left.child}</p><p class="family-text" style="font-style:italic">${C.families.left.partner}</p></div>
-          <div class="fade-child family-col-right-3" style="grid-column:3;grid-row:3;padding:0 0 8px;"><p class="family-text" style="font-style:italic">${C.families.right.child}</p><p class="family-text" style="font-style:italic">${C.families.right.partner}</p></div>
+        <!-- Parents row -->
+        <div class="family-layout">
+          <div class="family-col fade-child">
+            <div class="family-role">Côté marié</div>
+            <p class="family-text">${C.families.left.parents}</p>
+          </div>
+          <div class="family-sep-v"></div>
+          <div class="family-col family-col-right fade-child">
+            <div class="family-role">Côté mariée</div>
+            <p class="family-text">${C.families.right.parents}</p>
+          </div>
+        </div>
+        ${orn()}
+        <!-- Children row -->
+        <div class="family-layout">
+          <div class="family-col fade-child">
+            <p class="family-text" style="font-style:italic">${C.families.left.child}</p>
+            <p class="family-text" style="font-style:italic">${C.families.left.partner}</p>
+          </div>
+          <div class="family-sep-v"></div>
+          <div class="family-col family-col-right fade-child">
+            <p class="family-text" style="font-style:italic">${C.families.right.child}</p>
+            <p class="family-text" style="font-style:italic">${C.families.right.partner}</p>
+          </div>
         </div>
         ${orn()}
         <p class="heading-serif fade-child" style="font-size:clamp(22px,3.2vw,30px);font-style:normal;font-weight:500;color:var(--text-dark);line-height:1.7;">Ont l'honneur de vous inviter à la bénédiction par le mariage religieux de leurs enfants et petits-enfants,</p>
@@ -434,7 +447,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
         </button>
         <div class="gallery-track" id="gallery-track">
-          ${galleryImages.map((img,i)=>`<div class="gallery-item" data-img="${img}"><img src="${i===0?img:''}" data-src="${img}" data-orig="${img}" alt="Photo ${i+1}" loading="lazy" decoding="async" ${i===0?'fetchpriority="high"':''} style="cursor:zoom-in;" onclick="openLightbox(this.dataset.orig||this.src,${i})"></div>`).join('')}
+          ${galleryImages.map((img,i)=>`<div class="gallery-item" data-img="${img}"><img src="${i===0?img:''}" data-src="${img}" alt="Photo ${i+1}" loading="lazy" decoding="async" ${i===0?'fetchpriority="high"':''} style="cursor:zoom-in;" onclick="openLightbox('${img}')"></div>`).join('')}
         </div>
         <button class="gallery-nav-btn" id="gallery-next" aria-label="Photo suivante">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -672,15 +685,18 @@
     const lbPrev = document.getElementById('lightbox-prev');
     const lbNext = document.getElementById('lightbox-next');
 
-    // Toujours utiliser l'URL originale pour le lightbox (pas la miniature compressée)
+    // Forcer le chargement si l'image n'a pas encore été lazy-loadée
     const thumbImg = document.querySelectorAll('.gallery-item img')[idx];
-    const origSrc = (thumbImg && thumbImg.dataset.orig) || galleryImagesArr[idx];
-    lbImg.src = origSrc;
-
-    // Si la vignette n'est pas encore chargée, la déclencher aussi
-    if(thumbImg && thumbImg.dataset.src){
-      thumbImg.src = thumbImg.dataset.src;
-      thumbImg.removeAttribute('data-src');
+    if(thumbImg){
+      const realSrc = thumbImg.dataset.src || thumbImg.src;
+      if(thumbImg.dataset.src){
+        // Déclencher le chargement dans la vignette aussi
+        thumbImg.src = realSrc;
+        thumbImg.removeAttribute('data-src');
+      }
+      lbImg.src = realSrc;
+    } else {
+      lbImg.src = galleryImagesArr[idx];
     }
 
     lbCounter.textContent = (idx+1) + ' / ' + galleryImagesArr.length;
@@ -688,9 +704,9 @@
     if(lbNext) lbNext.disabled = idx === galleryImagesArr.length - 1;
   }
 
-  window.openLightbox = function(src, idx) {
-    const resolvedIdx = (typeof idx === 'number') ? idx : galleryImagesArr.indexOf(src);
-    updateLightbox(resolvedIdx >= 0 ? resolvedIdx : 0);
+  window.openLightbox = function(src) {
+    const idx = galleryImagesArr.indexOf(src);
+    updateLightbox(idx >= 0 ? idx : 0);
     document.getElementById('lightbox').classList.add('open');
     document.body.style.overflow = 'hidden';
   };
@@ -737,19 +753,19 @@
     items.forEach(item => obs.observe(item));
   }
 
-  // COMPRESSION — miniatures à 720px max / qualité 0.72 (bon équilibre vitesse/netteté)
+  // COMPRESSION — réduit à max 480px (miniatures galerie), qualité 0.55
   function compressImg(img){
     try{
       if(!img.naturalWidth) return;
-      const MAX = 720;
+      const MAX = 480;
       let w = img.naturalWidth, h = img.naturalHeight;
       const ratio = Math.min(MAX/w, MAX/h, 1);
-      if(ratio >= 1) return; // déjà assez petite
+      if(ratio >= 1) return; // déjà petite
       w = Math.round(w*ratio); h = Math.round(h*ratio);
       const c = document.createElement('canvas');
       c.width=w; c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
-      img.src = c.toDataURL('image/jpeg', 0.72);
+      img.src = c.toDataURL('image/jpeg', 0.55);
     }catch(e){}
   }
   function hookGalleryCompression(){
