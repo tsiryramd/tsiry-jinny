@@ -54,6 +54,6 @@ const WEDDING_CONFIG = {
   forbiddenColors: "Fluo",
 
   // --- CONTACTS RSVP (optionnel, laisser vide si non souhaité) ---
-  rsvpContact: "+261 38 82 678 11",  // ex: "+261 34 00 000 00" ou "nom@email.com"
+  rsvpContact: "+261 32 68 894 72",  // ex: "+261 34 00 000 00" ou "nom@email.com"
 
 };
