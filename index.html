@@ -347,28 +347,19 @@
     // 2 — FAMILLES
     `<div class="slide-inner">
       <div class="card">
-        <!-- Parents row -->
+        <!-- Côté marié + Côté mariée, chaque camp regroupé dans sa propre colonne -->
         <div class="family-layout">
           <div class="family-col fade-child">
             <div class="family-role">Côté marié</div>
             <p class="family-text">${C.families.left.parents}</p>
+            <p class="family-text" style="font-style:italic;margin-top:10px">${C.families.left.child}</p>
+            <p class="family-text" style="font-style:italic">${C.families.left.partner}</p>
           </div>
           <div class="family-sep-v"></div>
           <div class="family-col family-col-right fade-child">
             <div class="family-role">Côté mariée</div>
             <p class="family-text">${C.families.right.parents}</p>
-          </div>
-        </div>
-        ${orn()}
-        <!-- Children row -->
-        <div class="family-layout">
-          <div class="family-col fade-child">
-            <p class="family-text" style="font-style:italic">${C.families.left.child}</p>
-            <p class="family-text" style="font-style:italic">${C.families.left.partner}</p>
-          </div>
-          <div class="family-sep-v"></div>
-          <div class="family-col family-col-right fade-child">
-            <p class="family-text" style="font-style:italic">${C.families.right.child}</p>
+            <p class="family-text" style="font-style:italic;margin-top:10px">${C.families.right.child}</p>
             <p class="family-text" style="font-style:italic">${C.families.right.partner}</p>
           </div>
         </div>
