@@ -36,19 +36,19 @@ const WEDDING_CONFIG = {
 
   // --- CÉRÉMONIE ---
   ceremony: {
-    date:       "Samedi 22 Août 2026",
+    date:       "Vendredi 21 Août 2026",
     church:     "FJKM Androndra Fahasoavana",
-    churchTime: "11h00",
+    churchTime: "10h00",
   },
 
   // --- RÉCEPTION ---
   reception: {
-    venue:     "Anthirium Espace", // ← à remplir
-    time:      "13h30",                         // ← à remplir
+    venue:     "Anthurium Espace", // ← à remplir
+    time:      "12h30",                         // ← à remplir
   },
 
   // --- DEADLINE RSVP (M-1) ---
-  rsvpDeadline: "22 Juillet 2026",
+  rsvpDeadline: "30 Juillet 2026",
 
   // --- COULEURS INTERDITES ---
   forbiddenColors: "Fluo",
