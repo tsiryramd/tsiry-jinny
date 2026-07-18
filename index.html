@@ -90,7 +90,7 @@
   .heading-serif { font-family:'Cormorant Garamond',serif; font-size:clamp(19px,3.4vw,27px); font-weight:500; font-style:italic; color:var(--text-mid); line-height:1.6; }
   .heading-label { font-family:'Jost',sans-serif; font-size:12px; font-weight:400; letter-spacing:0.35em; text-transform:uppercase; color:var(--gold-deep); }
   .body-text { font-family:'Jost',sans-serif; font-size:clamp(15px,2.5vw,17px); font-weight:400; line-height:1.85; color:var(--text-mid); }
-  .family-text { font-family:'Cormorant Garamond',serif; font-size:clamp(18.5px,2.5vw,27px); font-weight:500; line-height:1.7; color:var(--text-mid); white-space:pre-line; }
+  .family-text { font-family:'Cormorant Garamond',serif; font-size:clamp(17px,1.7vw,20px); font-weight:500; line-height:1.55; color:var(--text-mid); white-space:pre-line; }
   .gold-text { color:var(--gold-deep); font-weight:600; }
   .big-date { font-family:'Cormorant Garamond',serif; font-size:clamp(32px,5.5vw,50px); font-weight:500; color:var(--text-dark); letter-spacing:0.05em; }
 
@@ -324,9 +324,9 @@
 
   // GALLERY IMAGES
   const galleryImages = C.galleryImages || [
-    'DSC08336.jpg','DSC08355.jpg','DSC08592.jpg','DSC08776.jpg',
-    'DSC08875.jpg','DSC08913.jpg','DSC09029.jpg','DSC08335.jpg',
-    'DSC08419.jpg','DSC08748.jpg','DSC08753.jpg'
+    'DSC08336.webp','DSC08355.webp','DSC08592.webp','DSC08776.webp',
+    'DSC08875.webp','DSC08913.webp','DSC09029.webp','DSC08335.webp',
+    'DSC08419.webp','DSC08748.webp','DSC08753.webp'
   ];
 
   const slides = [
@@ -438,7 +438,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
         </button>
         <div class="gallery-track" id="gallery-track">
-          ${galleryImages.map((img,i)=>`<div class="gallery-item" data-img="${img}"><img src="${i===0?img:''}" data-src="${img}" alt="Photo ${i+1}" loading="lazy" decoding="async" ${i===0?'fetchpriority="high"':''} style="cursor:zoom-in;" onclick="openLightbox('${img}')"></div>`).join('')}
+          ${galleryImages.map((img,i)=>`<div class="gallery-item" data-img="${img}"><img src="${i===0?img:''}" data-src="${img}" data-full="${img}" alt="Photo ${i+1}" loading="lazy" decoding="async" ${i===0?'fetchpriority="high"':''} style="cursor:zoom-in;" onclick="openLightbox('${img}')"></div>`).join('')}
         </div>
         <button class="gallery-nav-btn" id="gallery-next" aria-label="Photo suivante">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -514,7 +514,7 @@
 
   function onSlideEnter(idx){
     if(idx===3) startCountdown();
-    if(idx===5){ initGallery(); lazyLoadGallery(); setTimeout(hookGalleryCompression,300); }
+    if(idx===5){ initGallery(); lazyLoadGallery(); }
   }
 
   function goTo(next){
@@ -662,9 +662,9 @@
 
   // LIGHTBOX avec navigation prev/next
   const galleryImagesArr = C.galleryImages || [
-    'DSC08336.jpg','DSC08355.jpg','DSC08592.jpg','DSC08776.jpg',
-    'DSC08875.jpg','DSC08913.jpg','DSC09029.jpg','DSC08335.jpg',
-    'DSC08419.jpg','DSC08748.jpg','DSC08753.jpg'
+    'DSC08336.webp','DSC08355.webp','DSC08592.webp','DSC08776.webp',
+    'DSC08875.webp','DSC08913.webp','DSC09029.webp','DSC08335.webp',
+    'DSC08419.webp','DSC08748.webp','DSC08753.webp'
   ];
   let lbCurrent = 0;
 
@@ -676,16 +676,15 @@
     const lbPrev = document.getElementById('lightbox-prev');
     const lbNext = document.getElementById('lightbox-next');
 
-    // Forcer le chargement si l'image n'a pas encore été lazy-loadée
+    // Le lightbox charge toujours le fichier ORIGINAL (data-full), jamais la miniature compressée
     const thumbImg = document.querySelectorAll('.gallery-item img')[idx];
     if(thumbImg){
-      const realSrc = thumbImg.dataset.src || thumbImg.src;
       if(thumbImg.dataset.src){
         // Déclencher le chargement dans la vignette aussi
-        thumbImg.src = realSrc;
+        thumbImg.src = thumbImg.dataset.src;
         thumbImg.removeAttribute('data-src');
       }
-      lbImg.src = realSrc;
+      lbImg.src = thumbImg.dataset.full || galleryImagesArr[idx];
     } else {
       lbImg.src = galleryImagesArr[idx];
     }
@@ -736,34 +735,11 @@
         if(img){
           img.src = img.dataset.src;
           img.removeAttribute('data-src');
-          img.addEventListener('load', ()=>compressImg(img), {once:true});
         }
         obs.unobserve(entry.target);
       });
     }, { root: track, rootMargin: '0px 320px 0px 0px' }); // charge 2 images en avance max
     items.forEach(item => obs.observe(item));
-  }
-
-  // COMPRESSION — réduit à max 480px (miniatures galerie), qualité 0.55
-  function compressImg(img){
-    try{
-      if(!img.naturalWidth) return;
-      const MAX = 480;
-      let w = img.naturalWidth, h = img.naturalHeight;
-      const ratio = Math.min(MAX/w, MAX/h, 1);
-      if(ratio >= 1) return; // déjà petite
-      w = Math.round(w*ratio); h = Math.round(h*ratio);
-      const c = document.createElement('canvas');
-      c.width=w; c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      img.src = c.toDataURL('image/jpeg', 0.55);
-    }catch(e){}
-  }
-  function hookGalleryCompression(){
-    document.querySelectorAll('.gallery-item img').forEach(img=>{
-      if(img.complete && img.naturalWidth>0) compressImg(img);
-      else img.addEventListener('load',()=>compressImg(img),{once:true});
-    });
   }
 
 })();

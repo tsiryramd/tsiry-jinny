@@ -53,6 +53,14 @@ const WEDDING_CONFIG = {
   // --- COULEURS INTERDITES ---
   forbiddenColors: "Fluo",
 
+  // --- GALERIE PHOTOS ---
+  // Fichiers déjà compressés en .webp (<200 Ko chacun), à placer dans le dossier wedding/
+  galleryImages: [
+    "DSC08336.webp", "DSC08355.webp", "DSC08592.webp", "DSC08776.webp",
+    "DSC08875.webp", "DSC08913.webp", "DSC09029.webp", "DSC08335.webp",
+    "DSC08419.webp", "DSC08748.webp", "DSC08753.webp"
+  ],
+
   // --- CONTACTS RSVP (optionnel, laisser vide si non souhaité) ---
   rsvpContact: "+261 32 68 894 72",  // ex: "+261 34 00 000 00" ou "nom@email.com"
 
