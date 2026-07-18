@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.2">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invitation — Tsiry & Jinny</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
@@ -153,6 +153,20 @@
     z-index:1000;
   }
   #lightbox-close:hover { background:var(--gold); color:var(--text-dark); transform:scale(1.1); }
+  #lightbox-prev, #lightbox-next {
+    position:fixed; top:50%; transform:translateY(-50%);
+    width:48px; height:48px; border-radius:50%;
+    background:rgba(255,255,255,0.1);
+    border:1.5px solid rgba(201,168,76,0.45);
+    color:var(--gold-pale);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all 0.22s ease; z-index:1000;
+  }
+  #lightbox-prev { left:16px; }
+  #lightbox-next { right:16px; }
+  #lightbox-prev:hover, #lightbox-next:hover { background:var(--gold); border-color:var(--gold); color:var(--text-dark); transform:translateY(-50%) scale(1.1); }
+  #lightbox-prev:disabled, #lightbox-next:disabled { opacity:0.2; cursor:default; }
+  #lightbox-prev:disabled:hover, #lightbox-next:disabled:hover { background:rgba(255,255,255,0.1); border-color:rgba(201,168,76,0.45); color:var(--gold-pale); transform:translateY(-50%) scale(1); }
   #lightbox-counter {
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
     font-family:'Jost',sans-serif; font-size:11px; letter-spacing:0.25em;
@@ -250,6 +264,12 @@
 <div id="lightbox" role="dialog" aria-modal="true" aria-label="Vue agrandie">
   <button id="lightbox-close" aria-label="Fermer">✕</button>
   <img id="lightbox-img" src="" alt="Photo agrandie">
+  <button id="lightbox-prev" aria-label="Photo précédente">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+  </button>
+  <button id="lightbox-next" aria-label="Photo suivante">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
   <div id="lightbox-counter"></div>
 </div>
 
@@ -265,7 +285,7 @@
       <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </button>
   </div>
-  <div class="swipe-hint">Cliquez pour continuer</div>
+  <div class="swipe-hint" id="swipe-hint">Glissez pour continuer</div>
 </nav>
 
 <script>
@@ -340,12 +360,12 @@
       <div class="card fade-child">
         <div class="event-block">
           <p class="heading-label" style="margin-bottom:12px">La Bénédiction</p>
-          <p class="big-date">${C.ceremony.date}</p>
-          <p class="body-text" style="margin-top:12px"><span class="gold-text">${C.ceremony.church}</span><br>à ${C.ceremony.churchTime}</p>
+          <p class="big-date">${C.ceremony.date || 'Vendredi 21 Août 2026'}</p>
+          <p class="body-text" style="margin-top:12px"><span class="gold-text">${C.ceremony.church || 'FJKM Arivonimamo'}</span><br>à ${C.ceremony.churchTime || '10h00'}</p>
         </div>
         <div class="event-block">
           <p class="heading-label" style="margin-bottom:12px">La Réception</p>
-          <p class="body-text"><span class="gold-text">${C.reception.venue}</span><br>à ${C.reception.time}</p>
+          <p class="body-text"><span class="gold-text">${C.reception.venue || 'Espace Anthurium'}</span><br>à ${C.reception.time || '12h30'}</p>
         </div>
       </div>
     </div>`,
@@ -436,10 +456,10 @@
         <p class="body-text rsvp-text">
           Si vous ne pouvez malheureusement pas être présent(e),<br>
           merci de nous en informer avant le<br>
-          <span class="gold-text" style="font-size:2em;font-family:'Cormorant Garamond',serif;font-style:italic">${C.rsvpDeadline}</span>
+          <span class="gold-text" style="font-size:2em;font-family:'Cormorant Garamond',serif;font-style:italic">${C.rsvpDeadline || '31 juillet 2026'}</span>
         </p>
         ${C.rsvpContact?`<div class="ornament-line"><div class="ornament-line-dot"></div></div><p class="body-text"><span class="gold-text">${C.rsvpContact}</span></p>`:''}
-      </div>
+        <p class="body-text" style="margin-top:8px;"><span class="gold-text">+261 38 82 678 11</span></p>      </div>
       ${orn()}
       <p class="heading-label fade-child" style="letter-spacing:0.5em;opacity:0.5">Avec tout notre amour</p>
     </div>`,
@@ -472,6 +492,8 @@
     progress.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===current));
     btnNext.classList.toggle('hidden',current===slides.length-1);
     btnPrev.classList.toggle('hidden',current===0);
+    const hint = document.getElementById('swipe-hint');
+    if(hint) hint.style.opacity = current === slides.length-1 ? '0' : '';
   }
 
   function onSlideEnter(idx){
@@ -513,10 +535,11 @@
   let cdStarted=false;
   function startCountdown(){
     if(cdStarted)return; cdStarted=true;
-    // Parse date from config: "Samedi 22 Août 2026" + "11h00"
-    const raw=C.ceremony.date+' '+C.ceremony.churchTime;
+    // Parse date from config — fallback: Vendredi 21 Août 2026 10h00
+    const rawDate = C.ceremony.date || 'Vendredi 21 Août 2026';
+    const rawTime = C.ceremony.churchTime || '10h00';
     const months={'Janvier':0,'Février':1,'Mars':2,'Avril':3,'Mai':4,'Juin':5,'Juillet':6,'Août':7,'Aout':7,'Septembre':8,'Octobre':9,'Novembre':10,'Décembre':11};
-    const parts=raw.split(' ');
+    const parts=(rawDate+' '+rawTime).split(' ');
     // parts: ["Samedi","22","Août","2026","11h00"]
     const day=parseInt(parts[1]);
     const month=months[parts[2]]??7;
@@ -621,75 +644,95 @@
     document.body.appendChild(mb);
   }
 
-  // LIGHTBOX
+  // LIGHTBOX avec navigation prev/next
   const galleryImagesArr = C.galleryImages || [
     'DSC08336.jpg','DSC08355.jpg','DSC08592.jpg','DSC08776.jpg',
     'DSC08875.jpg','DSC08913.jpg','DSC09029.jpg','DSC08335.jpg',
     'DSC08419.jpg','DSC08748.jpg','DSC08753.jpg'
   ];
-  window.openLightbox = function(src) {
+  let lbCurrent = 0;
+
+  function updateLightbox(idx){
+    idx = Math.max(0, Math.min(galleryImagesArr.length-1, idx));
+    lbCurrent = idx;
     const lb = document.getElementById('lightbox');
     const lbImg = document.getElementById('lightbox-img');
     const lbCounter = document.getElementById('lightbox-counter');
-    lbImg.src = src;
-    const idx = galleryImagesArr.indexOf(src);
-    if(idx >= 0) lbCounter.textContent = (idx+1) + ' / ' + galleryImagesArr.length;
-    lb.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
-  document.getElementById('lightbox-close').addEventListener('click', () => {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  });
-  document.getElementById('lightbox').addEventListener('click', e => {
-    if(e.target === e.currentTarget) {
-      e.currentTarget.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  });
-  document.addEventListener('keydown', e => {
-    if(e.key === 'Escape') {
-      document.getElementById('lightbox').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  });
-
-  // LAZY LOADING IMAGES avec IntersectionObserver
-  function lazyLoadGallery() {
-    const imgs = document.querySelectorAll('.gallery-item img[data-src]');
-    if(!imgs.length) return;
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting) {
-          const img = entry.target;
-          const src = img.dataset.src;
-          if(src && !img.src.includes(src.replace(/^\.?\//,''))) {
-            img.src = src;
-            img.removeAttribute('data-src');
-          }
-          obs.unobserve(img);
-        }
-      });
-    }, { rootMargin: '200px' });
-    imgs.forEach(img => obs.observe(img));
+    const lbPrev = document.getElementById('lightbox-prev');
+    const lbNext = document.getElementById('lightbox-next');
+    lbImg.src = galleryImagesArr[idx];
+    lbCounter.textContent = (idx+1) + ' / ' + galleryImagesArr.length;
+    if(lbPrev) lbPrev.disabled = idx === 0;
+    if(lbNext) lbNext.disabled = idx === galleryImagesArr.length - 1;
   }
 
-  // COMPRESSION CANVAS — réduit chaque image à 50% de ses dimensions d'origine
+  window.openLightbox = function(src) {
+    const idx = galleryImagesArr.indexOf(src);
+    updateLightbox(idx >= 0 ? idx : 0);
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if(e.target === e.currentTarget) closeLightbox();
+  });
+  const lbPrevBtn = document.getElementById('lightbox-prev');
+  const lbNextBtn = document.getElementById('lightbox-next');
+  if(lbPrevBtn) lbPrevBtn.addEventListener('click', e => { e.stopPropagation(); updateLightbox(lbCurrent-1); });
+  if(lbNextBtn) lbNextBtn.addEventListener('click', e => { e.stopPropagation(); updateLightbox(lbCurrent+1); });
+
+  document.addEventListener('keydown', e => {
+    const lb = document.getElementById('lightbox');
+    if(!lb.classList.contains('open')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowLeft')  updateLightbox(lbCurrent-1);
+    if(e.key === 'ArrowRight') updateLightbox(lbCurrent+1);
+  });
+
+  // LAZY LOADING — charge seulement 2 images en avance, pas toutes d'un coup
+  function lazyLoadGallery() {
+    const items = document.querySelectorAll('.gallery-item');
+    if(!items.length) return;
+    const track = document.getElementById('gallery-track');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        const img = entry.target.querySelector('img[data-src]');
+        if(img){
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+          img.addEventListener('load', ()=>compressImg(img), {once:true});
+        }
+        obs.unobserve(entry.target);
+      });
+    }, { root: track, rootMargin: '0px 320px 0px 0px' }); // charge 2 images en avance max
+    items.forEach(item => obs.observe(item));
+  }
+
+  // COMPRESSION — réduit à max 480px (miniatures galerie), qualité 0.55
   function compressImg(img){
     try{
       if(!img.naturalWidth) return;
-      const MAX = 800;
+      const MAX = 480;
       let w = img.naturalWidth, h = img.naturalHeight;
-      if(w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-      const c=document.createElement('canvas');
+      const ratio = Math.min(MAX/w, MAX/h, 1);
+      if(ratio >= 1) return; // déjà petite
+      w = Math.round(w*ratio); h = Math.round(h*ratio);
+      const c = document.createElement('canvas');
       c.width=w; c.height=h;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      img.src=c.toDataURL('image/jpeg',0.70);
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      img.src = c.toDataURL('image/jpeg', 0.55);
     }catch(e){}
   }
   function hookGalleryCompression(){
     document.querySelectorAll('.gallery-item img').forEach(img=>{
-      if(img.complete&&img.naturalWidth>0) compressImg(img);
+      if(img.complete && img.naturalWidth>0) compressImg(img);
       else img.addEventListener('load',()=>compressImg(img),{once:true});
     });
   }
