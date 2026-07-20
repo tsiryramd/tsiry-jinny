@@ -58,7 +58,7 @@ const WEDDING_CONFIG = {
   galleryImages: [
     "DSC08336.webp", "DSC08355.webp", "DSC08592.webp", "DSC08776.webp",
     "DSC08875.webp", "DSC08913.webp", "DSC09029.webp", "DSC08335.webp",
-    "DSC08419.webp", "DSC08748.webp", "DSC08753.webp"
+    "DSC08419.webp", "DSC08748.webp", "DSC08753.webp","IMG20240117154653.webp"
   ],
 
   // --- CONTACTS RSVP (optionnel, laisser vide si non souhaité) ---
