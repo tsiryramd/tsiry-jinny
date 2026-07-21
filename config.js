@@ -43,7 +43,7 @@ const WEDDING_CONFIG = {
 
   // --- RÉCEPTION ---
   reception: {
-    venue:     "Anthurium Espace", // ← à remplir
+    venue:     "Anthurium Espace, Anjomakely route RN7", // ← à remplir
     time:      "12h30",                         // ← à remplir
   },
 
